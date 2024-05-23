@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+// buf:lint:ignore PACKAGE_DIRECTORY_MATCH
+package surrealds.v1;
+
+// ------------------------------ Cluster messages, alphabetical, paired
+
+message GetMembersRequest {
+}
+
+message GetMembersResponse {
+  repeated MemberInformation members = 1;
+}
+
+// ------------------------------ Transaction messages, alphabetical, paired
+
+message BeginTxRequest {
+}
+
+message BeginTxResponse {
+  bytes txUUID = 1;
+}
+
+message CommitTxRequest {
+  bytes txUUID = 1;
+}
+
+message CommitTxResponse {
+}
+
+// ------------------------------ Read messages, alphabetical, paired
+
+message ReadRequest {
+  bytes txUUID = 1;
+  repeated bytes keys = 2;
+}
+
+message ReadResponse {
+  repeated ReadEntryValue values = 1;
+}
+
+message ScanRequest {
+  bytes txUUID = 1;
+  Range range = 2;
+  bool includeValue = 3;
+}
+
+message ScanResponse {
+  repeated ReadEntryValueOptional range = 1;
+}
+
+// ------------------------------ Write messages, alphabetical, paired
+
+message DelRequest {
+  bytes txUUID = 1;
+}
+
+message DelResponse {
+
+}
+
+message DelrRequest {
+  bytes txUUID = 1;
+}
+
+message DelrResponse {
+
+}
+
+message PutRequest {
+  bytes txUUID = 1;
+}
+
+message PutResponse {
+
+}
+
+message PutcRequest {
+  bytes txUUID = 1;
+}
+
+message PutcResponse {
+
+}
+
+// ------------------------------ Types, alphabetical
+
+/*
+A web address where the host format is undetermined (IPv4, IPv6, URI)
+ */
+message Address {
+  string host = 1;
+  int32 port = 2;
+}
+
+/*
+The role that a node in a cluster might have
+ */
+enum ClusterRole {
+  Leader = 0;
+  Follower = 1;
+  // Not adding more types like Replica, because we can add them when
+  // needed and otherwise we don't want to handle those cases
+}
+
+/*
+Information about a node in a cluster
+ */
+message MemberInformation {
+  string memberID = 1;
+  Address advertisedAddress = 2;
+  ClusterRole role = 3;
+}
+
+/*
+A fixed-limit range within the key value space
+ */
+message Range {
+  bytes start = 1;
+  bytes end = 2;
+  uint32 limit = 3;
+}
+
+/*
+A Key-Value tuple
+ */
+message ReadEntryValue {
+  bytes key = 1;
+  bytes value = 2;
+}
+
+/*
+A Key-Value tuple where the value is optional
+ */
+message ReadEntryValueOptional {
+  bytes key = 1;
+  optional bytes value = 2;
+}
+
+// ------------------------------ Services, alphabetical
+
+service SurrealDSService {
+  // Cluster related requests, alphabetical
+  rpc GetMembers(GetMembersRequest) returns (GetMembersResponse);
+  // Transaction related requests, alphabetical
+  rpc BeginTx(BeginTxRequest) returns (BeginTxResponse);
+  rpc CommitTx(CommitTxRequest) returns (CommitTxResponse);
+  // Read related requests, alphabetical
+  rpc Read(ReadRequest) returns (ReadResponse);
+  rpc Scan(ScanRequest) returns (ScanResponse);
+  // Write related requests, alphabetical
+  rpc Del(DelRequest) returns (DelResponse);
+  rpc Delr(DelrRequest) returns (DelrResponse);
+  rpc Put(PutRequest) returns (PutResponse);
+  rpc Putc(PutcRequest) returns (PutcResponse);
+}

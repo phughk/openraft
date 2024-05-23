@@ -1,0 +1,18 @@
+cargo-features = ["edition2024"]
+
+[package]
+name = "protocol"
+publish = true
+version = "0.0.1"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+prost = "0.12.6"
+revision = "0.7.0"
+tonic = "0.11.0"
+tokio = { version = "1.36", features = ["rt", "sync", "test-util", "macros"] }
+
+[build-dependencies]
+prost-build = "0.12.6"
+tonic-build = "0.11.0"
